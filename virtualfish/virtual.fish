@@ -148,6 +148,12 @@ function __vfsupport_find_python --description "Search for and return Python pat
                 set python "$asdf_path"
             end
         end
+    # Use `mise` Python plugin, if found and provided version is available
+    else if type -q "mise"
+        set -l mise_path (mise where python $py_version)/bin/python
+        if command -q "$mise_path"
+            set python "$mise_path"
+        end
     # Use Pyenv, if found and provided version is available
     else if type -q "pyenv"
         if test -n "$PYENV_ROOT"
@@ -528,7 +534,7 @@ function __vf_upgrade --description "Upgrade virtualenv(s) to newer Python versi
         echo
         echo (set_color -di)"# Upgrade active virtual environment to current default Python version"$normal
         echo $green"vf upgrade"$normal
-        echo (set_color -di)"# Rebuild env1 & env2 using Python 3.8.5 via asdf, pyenv, or Pythonz"$normal
+        echo (set_color -di)"# Rebuild env1 & env2 using Python 3.8.5 via asdf, mise, pyenv, or Pythonz"$normal
         echo $green"vf upgrade --rebuild --python 3.8.5 env1 env2"$normal\n
         return 0
     end
